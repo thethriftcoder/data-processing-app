@@ -13,13 +13,7 @@ router = APIRouter(prefix="/sensor")
 async def save_sensor_data(sensor_data_file: UploadFile):
     """Upload sensor data metrics to the application."""
 
-    print(
-        sensor_data_file,
-        sensor_data_file.size,
-        sensor_data_file.content_type,
-        sensor_data_file.filename,
-        sensor_data_file.headers,
-    )
+    print(sensor_data_file)
 
     if not sensor_data_file.size or sensor_data_file.content_type != "application/json":
         raise HTTPException(422, "Invalid input. Please upload a valid sensor_data JSON file.")
@@ -38,6 +32,6 @@ async def save_sensor_data(sensor_data_file: UploadFile):
         sensor_data = schema.SensorData(**sensor_data_json)
     except pydantic.ValidationError as exc:
         print(f"error validating sensor JSON data: {exc}")
-        raise HTTPException(400, "Invalid input. Malformed sensor data values.")
+        raise HTTPException(422, "Invalid input. Malformed sensor data values.")
 
     return {"data": {"sensor_data": sensor_data, "size": sensor_data_file.size}}

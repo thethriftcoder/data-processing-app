@@ -1,7 +1,8 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Self
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class SensorHourlyUnits(BaseModel):
@@ -41,6 +42,24 @@ class SensorHourlyData(BaseModel):
     wind_speed_100m: list[Decimal | None]
     wind_direction_100m: list[Decimal | None]
 
+    model_config = ConfigDict(hide_input_in_errors=True)
+
+    @model_validator(mode="after")
+    def validate_hourly_data(self) -> Self:
+        """Performs basic validation by checking whether all data values contain the same number of datapoints."""
+
+        data_points = len(self.time)
+        data_fields = self.model_fields.keys()
+
+        for data_field in data_fields:
+            data_values = getattr(self, data_field)
+            if len(data_values) != data_points:
+                raise ValueError(
+                    f"Invalid input. Expected {data_points} datapoints for {data_field} but found {len(data_values)}."
+                )
+
+        return self
+
 
 class SensorData(BaseModel):
     """SensorData defines the schema for an uploaded sensor data file."""
@@ -54,3 +73,5 @@ class SensorData(BaseModel):
     elevation: Decimal
     hourly_units: SensorHourlyUnits
     hourly: SensorHourlyData
+
+    model_config = ConfigDict(hide_input_in_errors=True)
