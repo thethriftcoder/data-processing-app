@@ -1,15 +1,9 @@
-import asyncio
 from datetime import datetime
 
 from sqlalchemy import DECIMAL, DateTime, ForeignKey, Integer, String
-from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.api.config.config import DB_HOST, DB_NAME, DB_PASSWORD, DB_USER
-
-
-class Base(DeclarativeBase):
-    pass
+from src.api.models.base import Base
 
 
 class SensorFileMetadata(Base):
@@ -194,21 +188,3 @@ class HourlyWindDirection100m(Base):
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     wind_direction_100m: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
-
-
-db_url = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
-
-engine = create_async_engine(db_url, echo=False)
-AsyncSessionLocal = async_sessionmaker(
-    engine,
-    expire_on_commit=False,
-    class_=AsyncSession,
-)
-
-
-async def create_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-asyncio.create_task(create_tables())
