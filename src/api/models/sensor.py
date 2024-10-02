@@ -1,6 +1,7 @@
 from datetime import datetime
+from decimal import Decimal
 
-from sqlalchemy import DECIMAL, DateTime, ForeignKey, Integer, String
+from sqlalchemy import DateTime, DECIMAL, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.api.models.base import Base
@@ -26,13 +27,13 @@ class SensorData(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     file_metadata_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_file_metadata.id"))
-    latitude: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=False)
-    longitude: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=False)
-    generationtime_ms: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=False)
-    utc_offset_seconds: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=False)
+    latitude: Mapped[Decimal] = mapped_column(DECIMAL, nullable=False)
+    longitude: Mapped[Decimal] = mapped_column(DECIMAL, nullable=False)
+    generationtime_ms: Mapped[Decimal] = mapped_column(DECIMAL, nullable=False)
+    utc_offset_seconds: Mapped[Decimal] = mapped_column(DECIMAL, nullable=False)
     timezone: Mapped[str] = mapped_column(String, default="GMT", nullable=False)
     timezone_abbreviation: Mapped[str] = mapped_column(String, default="GMT", nullable=False)
-    elevation: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=False)
+    elevation: Mapped[Decimal] = mapped_column(DECIMAL, nullable=False)
 
     # Relationships to sensor data tables
     hourly_units = relationship("SensorHourlyUnits", backref="sensor_data")
@@ -79,7 +80,7 @@ class HourlyTemperature(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlyHumidity(Base):
@@ -88,7 +89,7 @@ class HourlyHumidity(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlyDewPoint(Base):
@@ -97,7 +98,7 @@ class HourlyDewPoint(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlyApparentTemperature(Base):
@@ -106,7 +107,7 @@ class HourlyApparentTemperature(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlyPrecipitation(Base):
@@ -115,7 +116,7 @@ class HourlyPrecipitation(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlyRain(Base):
@@ -124,7 +125,7 @@ class HourlyRain(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlySnowfall(Base):
@@ -133,7 +134,7 @@ class HourlySnowfall(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlySnowDepth(Base):
@@ -142,7 +143,7 @@ class HourlySnowDepth(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlyPressureMSL(Base):
@@ -151,7 +152,7 @@ class HourlyPressureMSL(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlySurfacePressure(Base):
@@ -160,7 +161,7 @@ class HourlySurfacePressure(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlyCloudCover(Base):
@@ -169,7 +170,7 @@ class HourlyCloudCover(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlyWindSpeed100m(Base):
@@ -178,7 +179,7 @@ class HourlyWindSpeed100m(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
 
 class HourlyWindDirection100m(Base):
@@ -187,4 +188,4 @@ class HourlyWindDirection100m(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    value: Mapped[DECIMAL] = mapped_column(DECIMAL, nullable=True)
+    value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
