@@ -55,7 +55,9 @@ async def save_initial_data(
 
 
 async def save_hourly_data(sensor_data: SensorData, sensor_data_id: int, session: AsyncSession) -> None:
-    """Prepares hourly data records from available sensor hourly data values and saves them to the database."""
+    """Prepares hourly data records from available sensor hourly data values and saves them to the database.
+    Creates db model instances based on the hourly data field type, during iteration over all fields for
+    `SensorHourlyData` class."""
 
     hourly_data_records: list[Base] = []
 
