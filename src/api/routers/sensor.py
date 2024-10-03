@@ -19,6 +19,11 @@ async def save_sensor_data(sensor_data_file: UploadFile, session: AsyncSession =
     if sensor_data_file.size > config.MAX_SENSOR_FILE_SIZE:
         raise HTTPException(422, "Invalid input. sensor_data file size exceeds 10MB.")
 
-    sensor_data = await service.process_sensor_data(sensor_data_file)
+    async with session.begin():
+        sensor_data = await service.process_sensor_data(sensor_data_file)
+        file_metadata_id, sensor_data_id = await service.save_initial_data(sensor_data_file, sensor_data, session)
+
+        await service.save_hourly_data(sensor_data, sensor_data_id, session)
+        await service.mark_upload_completion(file_metadata_id, session)
 
     return {"data": {"sensor_data": sensor_data, "size": sensor_data_file.size}}
