@@ -5,10 +5,10 @@ from fastapi import UploadFile, HTTPException
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.models.base import Base
-import src.api.models.sensor as models
-import src.api.repository.sensor as repository
-from src.api.schemas.sensor import SensorData, SensorHourlyData, SensorHourlyUnits
+from app.models.base import Base
+import app.models.sensor as models
+import app.repository.sensor as repository
+from app.schemas.sensor import SensorData, SensorHourlyData, SensorHourlyUnits
 
 
 async def process_sensor_data(sensor_data_file: UploadFile) -> SensorData:

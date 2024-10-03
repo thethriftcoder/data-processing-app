@@ -4,7 +4,7 @@ from decimal import Decimal
 from sqlalchemy import DateTime, DECIMAL, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.api.models.base import Base
+from app.models.base import Base
 
 
 class SensorFileMetadata(Base):

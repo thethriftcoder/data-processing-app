@@ -4,7 +4,7 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-from src.api.config.config import DB_HOST, DB_NAME, DB_PASSWORD, DB_USER
+from app.config.config import DB_HOST, DB_NAME, DB_PASSWORD, DB_USER
 
 
 class Base(DeclarativeBase):

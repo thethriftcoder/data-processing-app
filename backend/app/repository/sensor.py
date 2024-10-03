@@ -3,8 +3,8 @@ from sqlalchemy import update
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.models.base import Base
-import src.api.models.sensor as models
+from app.models.base import Base
+import app.models.sensor as models
 
 
 # TODO: maybe create a generic function for this process

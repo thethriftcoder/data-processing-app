@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.config import config
-from src.api.models.base import get_session
-from src.api.services import sensor as service
+from app.config import config
+from app.models.base import get_session
+from app.services import sensor as service
 
 
 router = APIRouter(prefix="/sensor")
