@@ -26,4 +26,4 @@ async def save_sensor_data(sensor_data_file: UploadFile, session: AsyncSession =
         await service.save_hourly_data(sensor_data, sensor_data_id, session)
         await service.mark_upload_completion(file_metadata_id, session)
 
-    return {"data": {"sensor_data": sensor_data, "size": sensor_data_file.size}}
+    return {"data": {"message": "File successfully saved to DB."}}
