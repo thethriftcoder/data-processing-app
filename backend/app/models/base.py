@@ -4,14 +4,14 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-from app.config.config import DB_HOST, DB_NAME, DB_PASSWORD, DB_USER
+from app.config.config import DB_HOST, DB_NAME, DB_PASSWORD, DB_USER, DB_PORT
 
 
 class Base(DeclarativeBase):
     pass
 
 
-DB_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+DB_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 engine = create_async_engine(DB_URL, echo=False)
 AsyncSessionLocal = async_sessionmaker(
