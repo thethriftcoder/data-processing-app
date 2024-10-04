@@ -3,6 +3,10 @@
   font-size: large;
 }
 
+.file-table-wrapper {
+  width: 80vw;
+}
+
 .file-table-wrapper .p-datatable-tbody td,
 .file-table-wrapper .p-datatable-thead th {
   border: 1px solid #424b57;

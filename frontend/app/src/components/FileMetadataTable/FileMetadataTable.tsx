@@ -37,7 +37,7 @@ export const FileMetadataTable = () => {
       <DataTable
         value={tableData}
         header={header}
-        tableStyle={{ minWidth: "50rem", width: "85%", borderColor: "blue" }}
+        tableStyle={{ minWidth: "50rem" }}
         scrollable
         scrollHeight="600px"
         showGridlines
