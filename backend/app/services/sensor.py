@@ -140,4 +140,7 @@ async def get_associated_sensor_data(file_metadata_id: int, session: AsyncSessio
 
     sensor_data = await repository.get_associated_sensor_data(file_metadata_id, session)
 
+    if sensor_data is None:
+        raise HTTPException(404, "Sensor data not found.")
+
     return sensor_data
