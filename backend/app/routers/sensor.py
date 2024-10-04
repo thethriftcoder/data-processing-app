@@ -15,7 +15,15 @@ async def get_all_file_metadata(session: AsyncSession = Depends(get_session)):
 
     file_metadata_records = await service.get_all_file_metadata(session)
 
-    return {"data": {"file_metadata_records": file_metadata_records, "record_count": len(file_metadata_records)}}
+    return {"data": {"file_metadata_records": file_metadata_records}}
+
+
+@router.get("/data/{file_metadata_id}")
+async def get_associated_sensor_data(file_metadata_id: int, session: AsyncSession = Depends(get_session)):
+    """Gets all sensor data, including hourly data, associated with the given file metadata ID."""
+
+    sensor_data = await service.get_associated_sensor_data(file_metadata_id, session)
+    return {"data": {"sensor_data": sensor_data}}
 
 
 @router.post("/data")

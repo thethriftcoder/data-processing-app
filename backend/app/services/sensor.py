@@ -133,3 +133,11 @@ async def get_all_file_metadata(session: AsyncSession) -> Sequence[models.Sensor
     file_metadata_records = await repository.get_all_file_metadata(session)
 
     return file_metadata_records
+
+
+async def get_associated_sensor_data(file_metadata_id: int, session: AsyncSession) -> models.SensorData | None:
+    """Gets all sensor data associated with the given file metadata ID."""
+
+    sensor_data = await repository.get_associated_sensor_data(file_metadata_id, session)
+
+    return sensor_data
