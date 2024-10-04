@@ -1,6 +1,13 @@
 .file-table-header {
   padding: 2vh 0.5vw;
   font-size: large;
+  display: flex;
+  justify-content: space-between;
+}
+
+.file-table-header button {
+  height: 5vh;
+  font-size: 1.2rem;
 }
 
 .file-table-wrapper {

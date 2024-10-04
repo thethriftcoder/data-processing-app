@@ -1,14 +1,28 @@
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { useGetSensorFilesMetadata } from "../../api/routes/sensor";
+import { Button } from "primereact/button";
 
 export const FileMetadataTable = () => {
-  const { data, isLoading, isFetched } = useGetSensorFilesMetadata();
+  const { data, refetch, isFetching, isFetched } = useGetSensorFilesMetadata();
 
-  const header = <div className="file-table-header">Uploaded Files Metadata</div>;
+  const header = (
+    <div className="file-table-header">
+      <span>Uploaded Files Metadata</span>
+      <Button
+        icon="pi pi-refresh"
+        label="Refresh"
+        rounded
+        raised
+        size="small"
+        onClick={() => refetch()}
+        disabled={isFetching}
+      />
+    </div>
+  );
 
-  if (isLoading) {
-    console.log("loading file metadata");
+  if (isFetching) {
+    console.log("getting file metadata");
   }
 
   if (isFetched) {
