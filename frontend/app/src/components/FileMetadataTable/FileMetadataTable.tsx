@@ -1,41 +1,24 @@
-// import React, { useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-
-const tableData = [
-  {
-    name: "small_data.json",
-    id: 4,
-    contentType: "application/json",
-    size: 7648,
-    uploadStartDate: "2024-10-03T05:34:03.049648",
-    uploadEndDate: "2024-10-03T05:34:04.049648",
-  },
-  {
-    name: "small_data.json",
-    id: 5,
-    contentType: "application/json",
-    size: 7648,
-    uploadStartDate: "2024-10-03T05:34:03.049648",
-    uploadEndDate: "2024-10-03T05:34:04.049648",
-  },
-  {
-    name: "small_data.json",
-    id: 6,
-    contentType: "application/json",
-    size: 7648,
-    uploadStartDate: "2024-10-03T05:34:03.049648",
-    uploadEndDate: "2024-10-03T05:34:04.049648",
-  },
-];
+import { useGetSensorFilesMetadata } from "../../api/routes/sensor";
 
 export const FileMetadataTable = () => {
+  const { data, isLoading, isFetched } = useGetSensorFilesMetadata();
+
   const header = <div className="file-table-header">Uploaded Files Metadata</div>;
+
+  if (isLoading) {
+    console.log("loading file metadata");
+  }
+
+  if (isFetched) {
+    console.log("got file metadata", data);
+  }
 
   return (
     <div className="file-table-wrapper">
       <DataTable
-        value={tableData}
+        value={data?.data.file_metadata_records ?? []}
         header={header}
         tableStyle={{ minWidth: "50rem" }}
         scrollable
@@ -56,7 +39,7 @@ export const FileMetadataTable = () => {
           headerStyle={{ textAlign: "center" }}
         />
         <Column
-          field="contentType"
+          field="content_type"
           header="Content Type"
           style={{ width: "150px", padding: "0 20px" }}
           headerStyle={{ textAlign: "center" }}
@@ -68,16 +51,17 @@ export const FileMetadataTable = () => {
           headerStyle={{ textAlign: "center" }}
         />
         <Column
-          field="uploadStartDate"
+          field="upload_start_date"
           header="File Uploaded At"
           style={{ width: "300px", padding: "0 20px" }}
           headerStyle={{ textAlign: "center" }}
         />
         <Column
-          field="uploadEndDate"
+          field="upload_end_date"
           header="File Processed At"
           style={{ width: "300px", padding: "0 20px" }}
           headerStyle={{ textAlign: "center" }}
+          body={(rowData) => rowData.upload_end_date || "N/A"}
         />
       </DataTable>
     </div>
