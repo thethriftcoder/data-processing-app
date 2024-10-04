@@ -4,9 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import config
 from app.models.base import get_session
 from app.services import sensor as service
+from app.utilities.basic_auth import authenticate_user
 
 
-router = APIRouter(prefix="/sensor")
+router = APIRouter(prefix="/sensor", dependencies=[Depends(authenticate_user)])
 
 
 @router.get("/metadata")

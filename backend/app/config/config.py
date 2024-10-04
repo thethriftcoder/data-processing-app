@@ -15,4 +15,7 @@ DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
 DB_PORT = os.environ["DB_PORT"]
 
+USER_NAME = os.environ["USER_NAME"]
+USER_PASSWORD = os.environ["USER_PASSWORD"]
+
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173", "http://0.0.0.0:5173"]
