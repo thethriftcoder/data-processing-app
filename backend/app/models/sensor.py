@@ -117,7 +117,9 @@ class HourlyHumidity(Base):
     __tablename__ = "hourly_humidity"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    sensor_data_id: Mapped[int] = mapped_column(Integer, ForeignKey("sensor_data.id"), nullable=False)
+    sensor_data_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("sensor_data.id", ondelete="CASCADE"), nullable=False
+    )
     time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     value: Mapped[Decimal] = mapped_column(DECIMAL, nullable=True)
 
