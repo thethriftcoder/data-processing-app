@@ -9,6 +9,15 @@ from app.services import sensor as service
 router = APIRouter(prefix="/sensor")
 
 
+@router.get("/metadata")
+async def get_all_file_metadata(session: AsyncSession = Depends(get_session)):
+    """Gets all file metadata records from the database."""
+
+    file_metadata_records = await service.get_all_file_metadata(session)
+
+    return {"data": {"file_metadata_records": file_metadata_records, "record_count": len(file_metadata_records)}}
+
+
 @router.post("/data")
 async def save_sensor_data(sensor_data_file: UploadFile, session: AsyncSession = Depends(get_session)):
     """Upload sensor data metrics to the application."""

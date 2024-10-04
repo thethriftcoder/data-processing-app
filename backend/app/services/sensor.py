@@ -1,5 +1,6 @@
 from decimal import Decimal
 import json
+from typing import Sequence
 
 from fastapi import UploadFile, HTTPException
 from pydantic import ValidationError
@@ -124,3 +125,11 @@ async def mark_upload_completion(file_metadata_id: int, session: AsyncSession) -
     """Marks upload completion time for the file metadata record."""
 
     await repository.mark_upload_completion(file_metadata_id, session)
+
+
+async def get_all_file_metadata(session: AsyncSession) -> Sequence[models.SensorFileMetadata]:
+    """Gets all file metadata records from the database."""
+
+    file_metadata_records = await repository.get_all_file_metadata(session)
+
+    return file_metadata_records
