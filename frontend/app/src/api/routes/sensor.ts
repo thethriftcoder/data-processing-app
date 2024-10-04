@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ApiResponse, BACKEND_URL } from "../../config";
+import { ApiResponse, AUTH_HEADER, BACKEND_URL } from "../../config";
 import { sensorFileMetadataResponse } from "../../schemas/sensor";
 
 const API_PREFIX = "sensor";
@@ -14,7 +14,9 @@ export const useGetSensorFilesMetadata = () =>
 async function getSensorFilesMetadata(): Promise<ApiResponse<sensorFileMetadataResponse>> {
   const url = new URL(BASE_URL + "/metadata");
 
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: { Authorization: AUTH_HEADER },
+  });
   const jsonData = await response.json();
 
   if (!response.ok) {
