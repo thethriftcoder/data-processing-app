@@ -1,9 +1,11 @@
-import { DataTable } from "primereact/datatable";
+import { DataTable, DataTableValue } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { useGetSensorFilesMetadata } from "../../api/routes/sensor";
 import { Button } from "primereact/button";
+import { useState } from "react";
 
 export const FileMetadataTable = () => {
+  const [selectedRow, setSelectedRow] = useState<DataTableValue | null>(null);
   const { data, refetch, isFetching, isFetched } = useGetSensorFilesMetadata();
 
   const header = (
@@ -25,7 +27,7 @@ export const FileMetadataTable = () => {
     console.log("getting file metadata");
   }
 
-  if (isFetched) {
+  if (isFetched && !selectedRow) {
     console.log("got file metadata", data);
   }
 
@@ -38,13 +40,17 @@ export const FileMetadataTable = () => {
         scrollable
         scrollHeight="600px"
         showGridlines
+        selectionMode={"radiobutton"}
+        selection={selectedRow}
+        onSelectionChange={(e) => setSelectedRow(e.value)}
+        dataKey={"id"}
       >
         <Column
           field="id"
           header="ID"
           style={{ width: "20px", padding: "0 20px" }}
-          //   bodyStyle={{ textAlign: "center" }}
           headerStyle={{ textAlign: "center" }}
+          selectionMode={"single"}
         />
         <Column
           field="name"
