@@ -38,7 +38,9 @@ class SensorData(Base):
     elevation: Mapped[Decimal] = mapped_column(DECIMAL, nullable=False)
 
     # Relationships to sensor data tables
-    hourly_units = relationship("SensorHourlyUnits", backref="sensor_data", cascade="all, delete", passive_deletes=True)
+    hourly_units = relationship(
+        "SensorHourlyUnits", backref="sensor_data", cascade="all, delete", passive_deletes=True, uselist=False
+    )
 
     hourly_temperatures = relationship(
         "HourlyTemperature", backref="sensor_data", cascade="all, delete", passive_deletes=True

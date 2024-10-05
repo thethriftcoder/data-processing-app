@@ -82,6 +82,7 @@ async def get_associated_sensor_data(file_metadata_id: int, session: AsyncSessio
         query = (
             select(SensorData)
             .filter(SensorData.file_metadata_id == file_metadata_id)
+            .options(selectinload(SensorData.hourly_units))
             .options(selectinload(SensorData.hourly_apparent_temperatures))
             .options(selectinload(SensorData.hourly_cloud_covers))
             .options(selectinload(SensorData.hourly_dew_points))
