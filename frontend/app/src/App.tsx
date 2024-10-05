@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { FileMetadataTable } from "./components/FileMetadataTable/FileMetadataTable";
+import { FileMetadataTable } from "./components/SensorData/FileMetadataTable";
 import "primeicons/primeicons.css";
 import "./App.css";
 
