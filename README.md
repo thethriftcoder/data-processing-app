@@ -6,7 +6,7 @@
 2. activate virtual environment: `source .venv/bin/activate` for unix systems and `.venv\Scripts\activate.bat` for Windows cmd-based systems.
 3. install dependencies: `pip install -r ./backend/requirements.txt` on unix and `pip install -r backend\requirements.txt` on windows.
 4. cd into `backend` folder and start application through uvicorn server: `uvicorn --app-dir ./backend app.main:app --reload` on unix and `uvicorn --app-dir backend app.main:app -- reload` for windows (optionally remove the `--reload` param).
-5. rename `.env.example` to `.env` and set appropriate env var values.
+5. rename `.env.example` in the `backend` directory to `.env` and set appropriate env var values.
 6. check whether application is running successfully by pinging healthcheck endpoint: `curl 127.0.0.1:8000`.
 
 ## how to acquire json data
