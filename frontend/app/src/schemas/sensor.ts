@@ -4,7 +4,7 @@ export interface sensorFileMetadata {
   content_type: string;
   size: number;
   upload_start_date: Date;
-  upload_end_date?: Date; // TODO: make this Date | null instead
+  upload_end_date: Date | null;
 }
 
 interface hourlyDataValue {
