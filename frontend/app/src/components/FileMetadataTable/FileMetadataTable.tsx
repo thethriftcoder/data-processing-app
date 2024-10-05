@@ -40,7 +40,7 @@ export const FileMetadataTable = () => {
         scrollable
         scrollHeight="600px"
         showGridlines
-        selectionMode={"radiobutton"}
+        selectionMode={"single"}
         selection={selectedRow}
         onSelectionChange={(e) => setSelectedRow(e.value)}
         dataKey={"id"}
