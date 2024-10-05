@@ -1,4 +1,4 @@
-export interface sensorFileMetadata {
+export interface SensorFileMetadata {
   id: number;
   name: string;
   content_type: string;
@@ -7,12 +7,31 @@ export interface sensorFileMetadata {
   upload_end_date: Date | null;
 }
 
-interface hourlyDataValue {
+interface HourlyDataValue {
   time: Date;
   value: number | null;
 }
 
-export interface sensorData {
+interface HourlyUnits {
+  sensor_data_id: number;
+  time: string;
+  relative_humidity_2m: string;
+  apparent_temperature: string;
+  rain: string;
+  snow_depth: string;
+  surface_pressure: string;
+  wind_speed_100m: string;
+  id: number;
+  temperature_2m: string;
+  dew_point_2m: string;
+  precipitation: string;
+  snowfall: string;
+  pressure_msl: string;
+  cloud_cover: string;
+  wind_direction_100m: string;
+}
+
+export interface SensorData {
   id: number;
   file_metadata_id: number;
   elevation: number;
@@ -22,25 +41,26 @@ export interface sensorData {
   utc_offset_seconds: number;
   timezone: string;
   timezone_abbreviation: string;
-  hourly_wind_speeds_100m: hourlyDataValue[];
-  hourly_wind_directions_100m: hourlyDataValue[];
-  hourly_temperatures: hourlyDataValue[];
-  hourly_humidities: hourlyDataValue[];
-  hourly_dew_points: hourlyDataValue[];
-  hourly_apparent_temperatures: hourlyDataValue[];
-  hourly_precipitations: hourlyDataValue[];
-  hourly_rains: hourlyDataValue[];
-  hourly_snowfalls: hourlyDataValue[];
-  hourly_snow_depths: hourlyDataValue[];
-  hourly_pressures_msl: hourlyDataValue[];
-  hourly_surface_pressures: hourlyDataValue[];
-  hourly_cloud_covers: hourlyDataValue[];
+  hourly_units: HourlyUnits;
+  hourly_wind_speeds_100m: HourlyDataValue[];
+  hourly_wind_directions_100m: HourlyDataValue[];
+  hourly_temperatures: HourlyDataValue[];
+  hourly_humidities: HourlyDataValue[];
+  hourly_dew_points: HourlyDataValue[];
+  hourly_apparent_temperatures: HourlyDataValue[];
+  hourly_precipitations: HourlyDataValue[];
+  hourly_rains: HourlyDataValue[];
+  hourly_snowfalls: HourlyDataValue[];
+  hourly_snow_depths: HourlyDataValue[];
+  hourly_pressures_msl: HourlyDataValue[];
+  hourly_surface_pressures: HourlyDataValue[];
+  hourly_cloud_covers: HourlyDataValue[];
 }
 
-export interface sensorFileMetadataResponse {
-  file_metadata_records: Array<sensorFileMetadata>;
+export interface SensorFileMetadataResponse {
+  file_metadata_records: Array<SensorFileMetadata>;
 }
 
-export interface sensorDataResponse {
-  sensor_data: sensorData;
+export interface SensorDataResponse {
+  sensor_data: SensorData;
 }

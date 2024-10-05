@@ -1,12 +1,14 @@
 import { DataTable, DataTableValue } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { useGetSensorFilesMetadata } from "../../api/routes/sensor";
+import { useGetSensorData, useGetSensorFilesMetadata } from "../../api/routes/sensor";
 import { Button } from "primereact/button";
 import { useState } from "react";
+import { SensorFileMetadata } from "../../schemas/sensor";
 
 export const FileMetadataTable = () => {
   const [selectedRow, setSelectedRow] = useState<DataTableValue | null>(null);
   const { data, refetch, isFetching, isFetched } = useGetSensorFilesMetadata();
+  const getSensorDataMutation = useGetSensorData();
 
   const header = (
     <div className="file-table-header">
@@ -26,7 +28,7 @@ export const FileMetadataTable = () => {
     </div>
   );
 
-  const actionButtons = () => (
+  const actionButtons = (rowData: SensorFileMetadata) => (
     <div className="file-table-actions">
       <Button
         icon="pi pi-chart-bar"
@@ -35,6 +37,9 @@ export const FileMetadataTable = () => {
         size="small"
         disabled={isFetching}
         className="sensor-graph-button"
+        onClick={() => {
+          getSensorDataMutation.mutate({ fileMetadataId: rowData.id });
+        }}
       />
     </div>
   );
