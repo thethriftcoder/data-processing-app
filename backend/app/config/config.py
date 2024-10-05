@@ -18,6 +18,10 @@ DB_PORT = os.environ["DB_PORT"]
 USER_NAME = os.environ["USER_NAME"]
 USER_PASSWORD = os.environ["USER_PASSWORD"]
 
+REDIS_HOST = os.environ["REDIS_HOST"]
+REDIS_PASSWORD = os.environ["REDIS_PASSWORD"]
+REDIS_PORT = os.environ["REDIS_PORT"]
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
