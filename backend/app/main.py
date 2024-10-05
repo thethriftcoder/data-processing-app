@@ -1,12 +1,21 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
 
-from app.routers import sensor
 from app.config.config import CORS_ALLOWED_ORIGINS
+from app.models.base import create_tables
+from app.routers import sensor
 
 
-app = FastAPI(default_response_class=ORJSONResponse)
+@asynccontextmanager
+async def lifespan(_):
+    await create_tables()
+    yield
+
+
+app = FastAPI(default_response_class=ORJSONResponse, lifespan=lifespan)
 
 app.include_router(sensor.router)
 app.add_middleware(

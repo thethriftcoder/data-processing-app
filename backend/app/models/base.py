@@ -1,5 +1,3 @@
-import asyncio
-
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
@@ -32,7 +30,5 @@ async def get_session():
 
 async def create_tables():
     async with engine.begin() as conn:
+        print("creating DB tables if they don't exist...")
         await conn.run_sync(Base.metadata.create_all)
-
-
-asyncio.create_task(create_tables())

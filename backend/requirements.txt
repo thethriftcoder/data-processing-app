@@ -5,11 +5,12 @@ asyncpg==0.29.0
 click==8.1.7
 fastapi==0.115.0
 greenlet==3.1.1
+gunicorn==23.0.0
 h11==0.14.0
 httptools==0.6.1
 idna==3.10
 orjson==3.10.7
-psycopg2==2.9.9
+packaging==24.1
 psycopg2-binary==2.9.9
 pydantic==2.9.2
 pydantic_core==2.23.4
