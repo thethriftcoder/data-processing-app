@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import config
 from app.models.base import get_session
 from app.services import sensor as service
+from app.services.sensor import process_sensor_data
 from app.utilities.basic_auth import authenticate_user
 
 
@@ -38,10 +39,11 @@ async def save_sensor_data(sensor_data_file: UploadFile, session: AsyncSession =
         raise HTTPException(422, "Invalid input. sensor_data file size exceeds 10MB.")
 
     async with session.begin():
-        sensor_data = await service.process_sensor_data(sensor_data_file)
+        sensor_data = await service.parse_sensor_data(sensor_data_file)
         file_metadata_id, sensor_data_id = await service.save_initial_data(sensor_data_file, sensor_data, session)
 
-        await service.save_hourly_data(sensor_data, sensor_data_id, session)
-        await service.mark_upload_completion(file_metadata_id, session)
+    # * serialize pydantic object into json for celery task
+    serialized_sensor_data = sensor_data.model_dump_json()
+    process_sensor_data.delay(serialized_sensor_data, file_metadata_id, sensor_data_id)
 
     return {"data": {"message": "File successfully saved to DB."}}

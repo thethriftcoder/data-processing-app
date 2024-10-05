@@ -1,3 +1,4 @@
+import asyncio
 from decimal import Decimal
 import json
 from typing import Sequence
@@ -6,14 +7,15 @@ from fastapi import UploadFile, HTTPException
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.base import Base
+from app.config.celery import app as celery_client
+from app.models.base import Base, AsyncSessionLocal
 import app.models.sensor as models
 import app.repository.sensor as repository
 from app.schemas.sensor import SensorData, SensorHourlyData, SensorHourlyUnits
 
 
-async def process_sensor_data(sensor_data_file: UploadFile) -> SensorData:
-    """Processes sensor data file content to prepare it for further use, catching and handling any errors during the
+async def parse_sensor_data(sensor_data_file: UploadFile) -> SensorData:
+    """Parses sensor data file content to prepare it for further use, catching and handling any errors during the
     process."""
 
     try:
@@ -144,3 +146,40 @@ async def get_associated_sensor_data(file_metadata_id: int, session: AsyncSessio
         raise HTTPException(404, "Sensor data not found.")
 
     return sensor_data
+
+
+async def check_hourly_data(sensor_data: SensorData, sensor_data_id: int):
+    """Checks hourly data and gathers any anomalies."""
+
+    # TODO: check anomalous data values from chatgpt and add here
+    print("checking hourly data for anomalies", sensor_data_id)
+
+
+async def _process_sensor_data(sensor_data: SensorData, file_metadata_id: int, sensor_data_id: int):
+    """Processes sensor data by checking for and reporting anomalies, and saving it to the database."""
+
+    await check_hourly_data(sensor_data, sensor_data_id)
+    print(f"checked hourly data for anomalies for file metadata ID:{file_metadata_id}")
+
+    async with AsyncSessionLocal() as session:
+        async with session.begin():
+            await save_hourly_data(sensor_data, sensor_data_id, session)
+            print(f"saved hourly data for file metadata ID:{file_metadata_id}")
+
+            await mark_upload_completion(file_metadata_id, session)
+            print(f"marked upload completion for file metadata ID: {file_metadata_id}")
+
+
+@celery_client.task()
+def process_sensor_data(serialized_sensor_data: str, file_metadata_id: int, sensor_data_id: int):
+    """Synchronous wrapper task that calls the actual async function."""
+
+    # parse json data back as pydantic model
+    sensor_data = SensorData.model_validate_json(serialized_sensor_data)
+    print("processing sensor data for file metadata ID:", file_metadata_id)
+
+    # * get the current running loop; avoid asyncio.run as that can create a new loop
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(_process_sensor_data(sensor_data, file_metadata_id, sensor_data_id))
+
+    print("processed sensor data for file metadata ID:", file_metadata_id)
