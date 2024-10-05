@@ -4,11 +4,24 @@ import { useGetSensorData, useGetSensorFilesMetadata } from "../../api/routes/se
 import { Button } from "primereact/button";
 import { useState } from "react";
 import { SensorFileMetadata } from "../../schemas/sensor";
+import { SensorDataDialog } from "./SensorDataChart";
 
 export const FileMetadataTable = () => {
   const [selectedRow, setSelectedRow] = useState<DataTableValue | null>(null);
+  const [showChartData, setShowChartData] = useState(false);
+
   const { data, refetch, isFetching, isFetched } = useGetSensorFilesMetadata();
   const getSensorDataMutation = useGetSensorData();
+
+  if (isFetching) {
+    console.log("getting file metadata");
+  }
+
+  if (isFetched && !selectedRow) {
+    console.log("got file metadata", data);
+  }
+
+  const hideChartDataModal = () => setShowChartData(false);
 
   const header = (
     <div className="file-table-header">
@@ -39,21 +52,20 @@ export const FileMetadataTable = () => {
         className="sensor-graph-button"
         onClick={() => {
           getSensorDataMutation.mutate({ fileMetadataId: rowData.id });
+          setShowChartData(true);
         }}
       />
     </div>
   );
 
-  if (isFetching) {
-    console.log("getting file metadata");
-  }
-
-  if (isFetched && !selectedRow) {
-    console.log("got file metadata", data);
-  }
-
   return (
     <div className="file-table-wrapper">
+      <SensorDataDialog
+        sensorData={getSensorDataMutation.data?.data.sensor_data}
+        visible={showChartData}
+        onHide={hideChartDataModal}
+      />
+
       <DataTable
         value={data?.data.file_metadata_records ?? []}
         header={header}

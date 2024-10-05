@@ -7,7 +7,7 @@ export interface SensorFileMetadata {
   upload_end_date: Date | null;
 }
 
-interface HourlyDataValue {
+export interface HourlyDataValue {
   time: Date;
   value: number | null;
 }
