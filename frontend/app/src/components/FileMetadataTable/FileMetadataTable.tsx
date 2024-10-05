@@ -17,8 +17,24 @@ export const FileMetadataTable = () => {
         rounded
         raised
         size="small"
-        onClick={() => refetch()}
+        onClick={() => {
+          refetch();
+          setSelectedRow(null);
+        }}
         disabled={isFetching}
+      />
+    </div>
+  );
+
+  const actionButtons = () => (
+    <div className="file-table-actions">
+      <Button
+        icon="pi pi-chart-bar"
+        title="Show Sensor Data Graph"
+        rounded
+        size="small"
+        disabled={isFetching}
+        className="sensor-graph-button"
       />
     </div>
   );
@@ -40,7 +56,7 @@ export const FileMetadataTable = () => {
         scrollable
         scrollHeight="600px"
         showGridlines
-        selectionMode={"single"}
+        // selectionMode={"radiobutton"}
         selection={selectedRow}
         onSelectionChange={(e) => setSelectedRow(e.value)}
         dataKey={"id"}
@@ -50,7 +66,7 @@ export const FileMetadataTable = () => {
           header="ID"
           style={{ width: "20px", padding: "0 20px" }}
           headerStyle={{ textAlign: "center" }}
-          selectionMode={"single"}
+          //   selectionMode={"single"}
         />
         <Column
           field="name"
@@ -83,6 +99,7 @@ export const FileMetadataTable = () => {
           headerStyle={{ textAlign: "center" }}
           body={(rowData) => rowData.upload_end_date || "N/A"}
         />
+        <Column body={actionButtons} header="Actions" />
       </DataTable>
     </div>
   );
