@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 import json
 from typing import Any
 
@@ -53,3 +54,35 @@ async def get_list_values(key: str, client: Redis = redis_client) -> list:
         raise
 
     return values
+
+
+async def get_latest_list_value(key: str, client: Redis = redis_client) -> Any:
+    """Gets latest list value given apt key."""
+
+    try:
+        value = await client.blpop([key], 0)  # type: ignore
+    except RedisError as exc:
+        print(f"error getting latest cached list value for list '{key}': {exc}")
+        raise
+
+    return value
+
+
+@asynccontextmanager
+async def subscribe_to_channel(namespace: str, pattern: bool = True, client: Redis = redis_client):
+    """Initializes a new pub-sub connection on the given channel namespace, using pattern-based or literal string-matching
+    subscription."""
+
+    pubsub = client.pubsub()
+    try:
+        if pattern:
+            await pubsub.psubscribe(namespace)
+        else:
+            await pubsub.subscribe(namespace)
+
+        yield pubsub
+    except RedisError as exc:
+        print(f"error subscribing to pubsub namespace '{namespace}': {exc}")
+        raise
+    finally:
+        await pubsub.unsubscribe()

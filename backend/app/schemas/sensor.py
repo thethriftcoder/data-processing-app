@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from typing import Self
@@ -75,3 +76,13 @@ class SensorData(BaseModel):
     hourly: SensorHourlyData
 
     model_config = ConfigDict(hide_input_in_errors=True)
+
+
+@dataclass
+class AnomalousMessageData:
+    """AnomalousMessageData represents an anomalous message event parsed into a structured format."""
+
+    file_metadata_id: int
+    data_type: str
+    time: str
+    value: Decimal

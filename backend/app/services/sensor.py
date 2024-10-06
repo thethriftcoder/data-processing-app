@@ -212,3 +212,34 @@ def process_sensor_data(serialized_sensor_data: str, file_metadata_id: int, sens
     loop.run_until_complete(_process_sensor_data(sensor_data, file_metadata_id, sensor_data_id))
 
     print("processed sensor data for file metadata ID:", file_metadata_id)
+
+
+def parse_anomalous_data(message_data: Any) -> AnomalousMessageData:
+    """Parses anomalous data from cache into a more structured format."""
+
+    try:
+        # message is a tuple containing (name, jsonified data)
+        message: dict = json.loads(message_data[1].decode("utf-8"))
+    except Exception as exc:
+        print(f"error decoding message data: {exc}")
+        raise
+
+    return AnomalousMessageData(message["id"], message["type"], message["time"], Decimal(message["value"]))
+
+
+async def consume_anomaly_updates():
+    """Parses and consumes anomalous data updates at a quick interval.."""
+
+    key = f"{ANOMALOUS_DATA_KEY}"
+    print("starting anomaly updates consumer")
+
+    while True:
+        data = None
+        raw_data = await cache_utils.get_latest_list_value(key)
+
+        if raw_data is not None:
+            data = parse_anomalous_data(raw_data)
+
+        yield data if data else None
+
+        await asyncio.sleep(0.01)
