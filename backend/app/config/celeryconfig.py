@@ -1,4 +1,4 @@
-from app.config.redis import redis_url
+from app.config.cache import redis_url
 
 
 broker_url = result_backend = redis_url
