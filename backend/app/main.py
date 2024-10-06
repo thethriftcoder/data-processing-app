@@ -18,6 +18,8 @@ async def lifespan(_):
 app = FastAPI(default_response_class=ORJSONResponse, lifespan=lifespan)
 
 app.include_router(sensor.router)
+app.include_router(sensor.ws_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ALLOWED_ORIGINS,

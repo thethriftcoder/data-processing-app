@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
+import asyncio
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import config
@@ -8,6 +9,8 @@ from app.services.sensor import process_sensor_data
 from app.utilities.basic_auth import authenticate_user
 
 
+# ws_router does not use basic auth as that requires HTTP requests
+ws_router = APIRouter(prefix="/sensor")
 router = APIRouter(prefix="/sensor", dependencies=[Depends(authenticate_user)])
 
 
@@ -47,3 +50,22 @@ async def save_sensor_data(sensor_data_file: UploadFile, session: AsyncSession =
     process_sensor_data.delay(serialized_sensor_data, file_metadata_id, sensor_data_id)
 
     return {"data": {"message": "File successfully saved to DB."}}
+
+
+@ws_router.websocket("/anomalies")
+async def stream_anomaly_updates(websocket: WebSocket):
+    """Streams all anomaly updates as they arrive."""
+
+    await websocket.accept()
+    try:
+        while True:
+            async for data in service.consume_anomaly_updates():
+                if data is not None:
+                    await websocket.send_json(data)
+
+                await asyncio.sleep(0.05)
+    except Exception as exc:
+        print(f"error streaming anomaly updates through websocket: {exc}")
+        raise
+    finally:
+        await websocket.close()

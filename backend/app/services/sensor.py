@@ -12,7 +12,7 @@ from app.config.config import ANOMALOUS_DATA_KEY, SENSOR_ANOMALOUS_THRESHOLDS
 from app.models.base import Base, AsyncSessionLocal
 import app.models.sensor as models
 import app.repository.sensor as repository
-from app.schemas.sensor import AnomalousMessageData, SensorData, SensorHourlyData, SensorHourlyUnits
+from app.schemas.sensor import SensorData, SensorHourlyData, SensorHourlyUnits
 import app.utilities.cache as cache_utils
 
 
@@ -214,7 +214,7 @@ def process_sensor_data(serialized_sensor_data: str, file_metadata_id: int, sens
     print("processed sensor data for file metadata ID:", file_metadata_id)
 
 
-def parse_anomalous_data(message_data: Any) -> AnomalousMessageData:
+def parse_anomalous_data(message_data: Any) -> dict:
     """Parses anomalous data from cache into a more structured format."""
 
     try:
@@ -224,7 +224,7 @@ def parse_anomalous_data(message_data: Any) -> AnomalousMessageData:
         print(f"error decoding message data: {exc}")
         raise
 
-    return AnomalousMessageData(message["id"], message["type"], message["time"], Decimal(message["value"]))
+    return message
 
 
 async def consume_anomaly_updates():
@@ -242,4 +242,4 @@ async def consume_anomaly_updates():
 
         yield data if data else None
 
-        await asyncio.sleep(0.01)
+        await asyncio.sleep(0.05)
