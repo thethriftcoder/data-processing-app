@@ -40,9 +40,10 @@ services:
       - "--requirepass ${REDIS_PASSWORD}"
 
   worker:
+    # image: dhruvahuja/data_processing_app:0.0.3mac
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.worker
     container_name: data_processing_worker
     restart: unless-stopped
     command: celery -A app.config.celery.app worker --loglevel=info
