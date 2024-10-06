@@ -2,7 +2,9 @@
 
 ## application demo video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/QzvqYJLlZ6w?si=wBUFPQSfv-WCcwzM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+Github does not allow embedding Youtube videos directly, please click on the thumbnail below to open the video on Youtube:
+#### Data Processing App Demo 05/10/24:
+[![Click the link to watch the video on Youtube](https://img.youtube.com/vi/QzvqYJLlZ6w/0.jpg)](https://www.youtube.com/watch?v=QzvqYJLlZ6w).
 
 ## how to setup and run the backend application
 
