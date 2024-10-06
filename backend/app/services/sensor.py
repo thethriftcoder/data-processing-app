@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.celery import app as celery_client
-from app.config.config import ANOMALOUS_DATA_KEY
+from app.config.config import ANOMALOUS_DATA_KEY, SENSOR_ANOMALOUS_THRESHOLDS
 from app.models.base import Base, AsyncSessionLocal
 import app.models.sensor as models
 import app.repository.sensor as repository
@@ -160,40 +160,19 @@ async def check_hourly_data(sensor_data: SensorData, file_metadata_id: int) -> N
     cache_key_prefix = f"{ANOMALOUS_DATA_KEY}:{file_metadata_id}"
 
     for field in SensorHourlyData.model_fields:
-        if field == "time":
-            continue
-        # precipiation-rain have similar values, skipping
-        elif field == "rain":
-            continue
-        elif field == "temperature_2m":
-            min_value, max_value = -10, 50
-        elif field == "relative_humidity_2m":
-            min_value, max_value = 35, 85
-        elif field == "dew_point_2m":
-            min_value, max_value = -15, 20
-        elif field == "apparent_temperature":
-            min_value, max_value = -15, 20
-        elif field == "precipitation":
-            min_value, max_value = 0, 40
-        elif field == "snowfall":
-            min_value, max_value = 0, 10
-        elif field == "snow_depth":
-            min_value, max_value = 0, 0.1
-        elif field == "pressure_msl":
-            min_value, max_value = 950, 1050
-        elif field == "surface_pressure":
-            min_value, max_value = 980, 1020
-        elif field == "cloud_cover":
-            min_value, max_value = 0, 85
-        elif field == "wind_speed_100m":
-            min_value, max_value = 0, 35
-        else:
-            # hourly wind direction doesn't have any pre-defined extremes, skipping
+        # precipitation-rain have similar values, skipping
+        if field == "time" or field == "rain":
             continue
 
+        threshold_values = SENSOR_ANOMALOUS_THRESHOLDS.get(field)
+        if threshold_values is None:
+            continue
+
+        min_threshold, max_threshold = threshold_values
+
         values: list[Decimal] = getattr(hourly_data, field)
-        min_value = Decimal(min_value)
-        max_value = Decimal(max_value)
+        min_threshold = Decimal(min_threshold)
+        max_threshold = Decimal(max_threshold)
 
         for index, value in enumerate(values):
             time = time_data_points[index]
@@ -201,7 +180,7 @@ async def check_hourly_data(sensor_data: SensorData, file_metadata_id: int) -> N
             if value is None:
                 continue
 
-            if value < min_value or value > max_value:
+            if value < min_threshold or value > max_threshold:
                 # * cache anomalous data for notifications
                 cache_key = cache_key_prefix + ":" + field
                 anomalous_data = {"time": str(time), "value": str(value)}

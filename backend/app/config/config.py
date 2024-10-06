@@ -32,3 +32,17 @@ CORS_ALLOWED_ORIGINS = [
     "https://sensordata.vercel.app",
     "sensordata.vercel.app",
 ]
+
+SENSOR_ANOMALOUS_THRESHOLDS: dict[str, tuple[int, int | float]] = {
+    "temperature_2m": (-10, 50),
+    "relative_humidity_2m": (35, 85),
+    "dew_point_2m": (-15, 20),
+    "apparent_temperature": (-15, 20),
+    "precipitation": (0, 40),
+    "snowfall": (0, 10),
+    "snow_depth": (0, 0.1),
+    "pressure_msl": (950, 1050),
+    "surface_pressure": (980, 1020),
+    "cloud_cover": (0, 85),
+    "wind_speed_100m": (0, 35),
+}
