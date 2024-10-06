@@ -8,10 +8,12 @@ from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.celery import app as celery_client
+from app.config.config import ANOMALOUS_DATA_KEY
 from app.models.base import Base, AsyncSessionLocal
 import app.models.sensor as models
 import app.repository.sensor as repository
 from app.schemas.sensor import SensorData, SensorHourlyData, SensorHourlyUnits
+import app.utilities.cache as cache_utils
 
 
 async def parse_sensor_data(sensor_data_file: UploadFile) -> SensorData:
@@ -148,17 +150,74 @@ async def get_associated_sensor_data(file_metadata_id: int, session: AsyncSessio
     return sensor_data
 
 
-async def check_hourly_data(sensor_data: SensorData, sensor_data_id: int):
-    """Checks hourly data and gathers any anomalies."""
+async def check_hourly_data(sensor_data: SensorData, file_metadata_id: int) -> None:
+    """Checks hourly data, caching any detected anomalous values. Uses `file_metadata_id` as the unique identifier for
+    cache keys, which are set to expire after a pre-determined duration."""
 
-    # TODO: check anomalous data values from chatgpt and add here
-    print("checking hourly data for anomalies", sensor_data_id)
+    hourly_data = sensor_data.hourly
+    time_data_points = hourly_data.time
+
+    cache_key_prefix = f"{ANOMALOUS_DATA_KEY}:{file_metadata_id}"
+
+    for field in SensorHourlyData.model_fields:
+        if field == "time":
+            continue
+        # precipiation-rain have similar values, skipping
+        elif field == "rain":
+            continue
+        elif field == "temperature_2m":
+            min_value, max_value = -10, 50
+        elif field == "relative_humidity_2m":
+            min_value, max_value = 35, 85
+        elif field == "dew_point_2m":
+            min_value, max_value = -15, 20
+        elif field == "apparent_temperature":
+            min_value, max_value = -15, 20
+        elif field == "precipitation":
+            min_value, max_value = 0, 40
+        elif field == "snowfall":
+            min_value, max_value = 0, 10
+        elif field == "snow_depth":
+            min_value, max_value = 0, 0.1
+        elif field == "pressure_msl":
+            min_value, max_value = 950, 1050
+        elif field == "surface_pressure":
+            min_value, max_value = 980, 1020
+        elif field == "cloud_cover":
+            min_value, max_value = 0, 85
+        elif field == "wind_speed_100m":
+            min_value, max_value = 0, 35
+        else:
+            # hourly wind direction doesn't have any pre-defined extremes, skipping
+            continue
+
+        values: list[Decimal] = getattr(hourly_data, field)
+        min_value = Decimal(min_value)
+        max_value = Decimal(max_value)
+
+        for index, value in enumerate(values):
+            time = time_data_points[index]
+
+            if value is None:
+                continue
+
+            if value < min_value or value > max_value:
+                # * cache anomalous data for notifications
+                cache_key = cache_key_prefix + ":" + field
+                anomalous_data = {"time": str(time), "value": str(value)}
+
+                await cache_utils.append_to_list(cache_key, anomalous_data)
+
+    # await cache_utils.set_expiry(cache_key_prefix, ANOMALOUS_DATA_EXPIRY_TIME)
+
+
+# TODO: add susbcriber logic
 
 
 async def _process_sensor_data(sensor_data: SensorData, file_metadata_id: int, sensor_data_id: int):
     """Processes sensor data by checking for and reporting anomalies, and saving it to the database."""
 
-    await check_hourly_data(sensor_data, sensor_data_id)
+    await check_hourly_data(sensor_data, file_metadata_id)
     print(f"checked hourly data for anomalies for file metadata ID:{file_metadata_id}")
 
     async with AsyncSessionLocal() as session:
