@@ -1,7 +1,7 @@
 import asyncio
 from decimal import Decimal
 import json
-from typing import Sequence
+from typing import Any, Sequence
 
 from fastapi import UploadFile, HTTPException
 from pydantic import ValidationError
@@ -12,7 +12,7 @@ from app.config.config import ANOMALOUS_DATA_KEY, SENSOR_ANOMALOUS_THRESHOLDS
 from app.models.base import Base, AsyncSessionLocal
 import app.models.sensor as models
 import app.repository.sensor as repository
-from app.schemas.sensor import SensorData, SensorHourlyData, SensorHourlyUnits
+from app.schemas.sensor import AnomalousMessageData, SensorData, SensorHourlyData, SensorHourlyUnits
 import app.utilities.cache as cache_utils
 
 
@@ -151,13 +151,10 @@ async def get_associated_sensor_data(file_metadata_id: int, session: AsyncSessio
 
 
 async def check_hourly_data(sensor_data: SensorData, file_metadata_id: int) -> None:
-    """Checks hourly data, caching any detected anomalous values. Uses `file_metadata_id` as the unique identifier for
-    cache keys, which are set to expire after a pre-determined duration."""
+    """Checks hourly data, caching any detected anomalous values, for further processing."""
 
     hourly_data = sensor_data.hourly
     time_data_points = hourly_data.time
-
-    cache_key_prefix = f"{ANOMALOUS_DATA_KEY}:{file_metadata_id}"
 
     for field in SensorHourlyData.model_fields:
         # precipitation-rain have similar values, skipping
@@ -182,15 +179,9 @@ async def check_hourly_data(sensor_data: SensorData, file_metadata_id: int) -> N
 
             if value < min_threshold or value > max_threshold:
                 # * cache anomalous data for notifications
-                cache_key = cache_key_prefix + ":" + field
-                anomalous_data = {"time": str(time), "value": str(value)}
+                anomalous_data = {"id": file_metadata_id, "type": field, "time": str(time), "value": str(value)}
 
-                await cache_utils.append_to_list(cache_key, anomalous_data)
-
-    # await cache_utils.set_expiry(cache_key_prefix, ANOMALOUS_DATA_EXPIRY_TIME)
-
-
-# TODO: add susbcriber logic
+                await cache_utils.append_to_list(ANOMALOUS_DATA_KEY, anomalous_data)
 
 
 async def _process_sensor_data(sensor_data: SensorData, file_metadata_id: int, sensor_data_id: int):
