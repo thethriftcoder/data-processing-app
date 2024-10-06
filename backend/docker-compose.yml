@@ -40,7 +40,6 @@ services:
       - "--requirepass ${REDIS_PASSWORD}"
 
   worker:
-    # image: dhruvahuja/data_processing_app:0.0.3mac
     build:
       context: .
       dockerfile: ./Dockerfile.worker
