@@ -39,6 +39,29 @@ services:
     command:
       - "--requirepass ${REDIS_PASSWORD}"
 
+  worker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: data_processing_worker
+    restart: unless-stopped
+    command: celery -A app.config.celery.app worker --loglevel=info
+    environment:
+      - DB_NAME=data_processing_app
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=5432
+      - USER_NAME=${USER_NAME}
+      - USER_PASSWORD=${USER_PASSWORD}
+      - REDIS_HOST=cache
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=6379
+    env_file:
+      - .env
+    depends_on:
+      - cache
+
   app:
     build: .
     container_name: data_processing_app
@@ -61,4 +84,5 @@ services:
     depends_on:
       - db
       - cache
+      - worker
     
