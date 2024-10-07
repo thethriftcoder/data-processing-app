@@ -3,8 +3,35 @@
 ## application demo video
 
 Github does not allow embedding Youtube videos directly, please click on the thumbnail below to open the video on Youtube:
-#### Data Processing App Demo 05/10/24:
+
+### Data Processing App Demo 05/10/24
+
 [![Click the link to watch the video on Youtube](https://img.youtube.com/vi/QzvqYJLlZ6w/0.jpg)](https://www.youtube.com/watch?v=QzvqYJLlZ6w).
+
+## Architecture
+
+DB schema diagram:
+![DB Schema Diagram](db_schema.png)
+
+Application architecture:
+![Application Architecture Diagram](architecture.png)
+
+The FastAPI Backend and Celery Worker services are running in a Google Cloud Run application, within Google Cloud Platform.
+They both interact with a caching layer hosting using Redis' own hosting service, and a Postgres database instance running on a private VPS.
+Vercel hosts a React-based Frontend that interacts with the FastAPI backend. Vercel automatically deploys any code pushed to the GitHub repository.
+
+The backend also supports auto-scaling up to 3 containers to handle bursts of incoming concurrent requests. All HTTP endpoints are secured with basic auth to prevent unathourized use.
+
+## Workflow
+
+![Application Workflow Diagram](workflow.png)
+
+Users can upload a JSON file containing hourly sensor data, through the `/sensor/data` endpoint. Once uploaded, metadata and general sensor data is stored in the Postgres database. Hourly sensor data is enqueued as a task to be processed by the Celery Worker.
+
+The Celery Worker checks the hourly sensor data for anomalies and interacts with the Cache to store any anomalous values.
+Users subscribing to the `/sensor/anomalies` WebSocket endpoint receive real-time updates for anomalous values. All WebSocket messages include the file ID, indicating the file which contains the anomalous value.
+
+Users can connect to the application through the React-based Frontend, to see metadata for all uploaded files. They can view a time-plotted graph for a particular file. The graph shows various sensor data values for all available data entrypoints.
 
 ## how to setup and run the backend application
 
